@@ -103,7 +103,9 @@
                 <Parameter Id="%AID%_UP-%TT%00005" Name="TotalPowerSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Gesamtleistung senden" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%00010" Name="TotalCurrentSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="Gesamtstrom senden" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%00019" Name="TotalEnergySend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="2" Text="Gesamtenergie senden" Value="0" />
-                <!-- 5 bits free -->
+                <Parameter Id="%AID%_UP-%TT%00023" Name="TotalPowerSendCyclicAverage" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="3" Text="Mittelwert über Zyklus senden" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%00024" Name="TotalCurrentSendCyclicAverage" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="4" Text="Mittelwert über Zyklus senden" Value="0" />
+                <!-- 3 bits free -->
                 <Parameter Id="%AID%_UP-%TT%00006" Name="TotalPowerSendMinChangePercent" ParameterType="%AID%_PT-ValueDpt5001" Offset="1" BitOffset="0" Text="Mindeständerung relativ" Value="5" SuffixText="%" />
                 <Parameter Id="%AID%_UP-%TT%00007" Name="TotalPowerSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangePower" Offset="2" BitOffset="0" Text="Mindeständerung absolut" Value="1" SuffixText="W" />
                 <Parameter Id="%AID%_UP-%TT%00008" Name="TotalPowerSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="4" BitOffset="0" Text="Zeitbasis" Value="0" />
@@ -149,6 +151,8 @@
               <ParameterRef Id="%AID%_UP-%TT%00020_R-%TT%0002001" RefId="%AID%_UP-%TT%00020" />
               <ParameterRef Id="%AID%_UP-%TT%00021_R-%TT%0002101" RefId="%AID%_UP-%TT%00021" />
               <ParameterRef Id="%AID%_UP-%TT%00022_R-%TT%0002201" RefId="%AID%_UP-%TT%00022" />
+              <ParameterRef Id="%AID%_UP-%TT%00023_R-%TT%0002301" RefId="%AID%_UP-%TT%00023" />
+              <ParameterRef Id="%AID%_UP-%TT%00024_R-%TT%0002401" RefId="%AID%_UP-%TT%00024" />
             </ParameterRefs>
             <ComObjectTable>
               <ComObject Id="%AID%_O-%TT%00001" Name="CentralFunction" Number="0" ObjectSize="1 Bit" Text="Zentralfunktion" FunctionText="SA: Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
@@ -220,64 +224,109 @@
                       <when test="1">
                         <ParameterRefRef RefId="%AID%_UP-%TT%00006_R-%TT%0000601" IndentLevel="2" HelpContext="%DOC%" />
                         <ParameterRefRef RefId="%AID%_UP-%TT%00007_R-%TT%0000701" IndentLevel="2" HelpContext="%DOC%" />
-                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalPowerSend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
-                          <Rows>
-                            <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
-                          </Rows>
-                          <Columns>
-                            <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
-                            <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
-                            <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
-                            <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
-                          </Columns>
-                          <ParameterSeparator Id="%AID%_PS-nnn" Text="   Gesamtleistung zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
-                          <ParameterRefRef RefId="%AID%_UP-%TT%00009_R-%TT%0000901" Cell="1,3" />
-                          <ParameterRefRef RefId="%AID%_UP-%TT%00008_R-%TT%0000801" Cell="1,4" />
-                        </ParameterBlock>
-                        <ComObjectRefRef RefId="%AID%_O-%TT%00002_R-%TT%0000201" />
                       </when>
                     </choose>
+                    <ParameterBlock Id="%AID%_PB-nnn" Name="GesamtleistungCyclic" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
+                      <Rows>
+                        <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
+                      </Rows>
+                      <Columns>
+                        <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
+                        <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
+                        <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
+                        <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
+                      </Columns>
+                      <ParameterSeparator Id="%AID%_PS-nnn" Text="   Gesamtleistung zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
+                      <ParameterRefRef RefId="%AID%_UP-%TT%00009_R-%TT%0000901" Cell="1,3" />
+                      <ParameterRefRef RefId="%AID%_UP-%TT%00008_R-%TT%0000801" Cell="1,4" />
+                    </ParameterBlock>
+                    <choose ParamRefId="%AID%_UP-%TT%00009_R-%TT%0000901">
+                      <when test="!=0">
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00023_R-%TT%0002301" IndentLevel="2" HelpContext="%DOC%" />
+                      </when>
+                    </choose>
+                    <choose ParamRefId="%AID%_UP-%TT%00005_R-%TT%0000501">
+                      <when test="1">
+                        <ComObjectRefRef RefId="%AID%_O-%TT%00002_R-%TT%0000201" />
+                      </when>
+                      <when test="0">
+                        <choose ParamRefId="%AID%_UP-%TT%00009_R-%TT%0000901">
+                          <when test="!=0">
+                            <ComObjectRefRef RefId="%AID%_O-%TT%00002_R-%TT%0000201" />
+                          </when>
+                        </choose>
+                      </when>
+                    </choose>
+
                     <ParameterRefRef RefId="%AID%_UP-%TT%00010_R-%TT%0001001" IndentLevel="1" HelpContext="%DOC%" />
                     <choose ParamRefId="%AID%_UP-%TT%00010_R-%TT%0001001">
                       <when test="1">
                         <ParameterRefRef RefId="%AID%_UP-%TT%00011_R-%TT%0001101" IndentLevel="2" HelpContext="%DOC%" />
                         <ParameterRefRef RefId="%AID%_UP-%TT%00012_R-%TT%0001201" IndentLevel="2" HelpContext="%DOC%" />
-                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalCurrentSend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
-                          <Rows>
-                            <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
-                          </Rows>
-                          <Columns>
-                            <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
-                            <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
-                            <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
-                            <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
-                          </Columns>
-                          <ParameterSeparator Id="%AID%_PS-nnn" Text="   Gesamtstrom zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
-                          <ParameterRefRef RefId="%AID%_UP-%TT%00014_R-%TT%0001401" Cell="1,3" />
-                          <ParameterRefRef RefId="%AID%_UP-%TT%00013_R-%TT%0001301" Cell="1,4" />
-                        </ParameterBlock>
-                        <ComObjectRefRef RefId="%AID%_O-%TT%00003_R-%TT%0000301" />
                       </when>
                     </choose>
+                    <ParameterBlock Id="%AID%_PB-nnn" Name="GesamtstromCyclic" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
+                      <Rows>
+                        <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
+                      </Rows>
+                      <Columns>
+                        <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
+                        <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
+                        <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
+                        <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
+                      </Columns>
+                      <ParameterSeparator Id="%AID%_PS-nnn" Text="   Gesamtstrom zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
+                      <ParameterRefRef RefId="%AID%_UP-%TT%00014_R-%TT%0001401" Cell="1,3" />
+                      <ParameterRefRef RefId="%AID%_UP-%TT%00013_R-%TT%0001301" Cell="1,4" />
+                    </ParameterBlock>
+                    <choose ParamRefId="%AID%_UP-%TT%00014_R-%TT%0001401">
+                      <when test="!=0">
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00024_R-%TT%0002401" IndentLevel="2" HelpContext="%DOC%" />
+                      </when>
+                    </choose>
+                    <choose ParamRefId="%AID%_UP-%TT%00010_R-%TT%0001001">
+                      <when test="1">
+                        <ComObjectRefRef RefId="%AID%_O-%TT%00003_R-%TT%0000301" />
+                      </when>
+                      <when test="0">
+                        <choose ParamRefId="%AID%_UP-%TT%00014_R-%TT%0001401">
+                          <when test="!=0">
+                            <ComObjectRefRef RefId="%AID%_O-%TT%00003_R-%TT%0000301" />
+                          </when>
+                        </choose>
+                      </when>
+                    </choose>
+
                     <ParameterRefRef RefId="%AID%_UP-%TT%00019_R-%TT%0001901" IndentLevel="1" HelpContext="%DOC%" />
                     <choose ParamRefId="%AID%_UP-%TT%00019_R-%TT%0001901">
                       <when test="1">
                         <ParameterRefRef RefId="%AID%_UP-%TT%00020_R-%TT%0002001" IndentLevel="2" HelpContext="%DOC%" />
-                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalEnergySend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
-                          <Rows>
-                            <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
-                          </Rows>
-                          <Columns>
-                            <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
-                            <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
-                            <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
-                            <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
-                          </Columns>
-                          <ParameterSeparator Id="%AID%_PS-nnn" Text="   Gesamtenergie zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
-                          <ParameterRefRef RefId="%AID%_UP-%TT%00022_R-%TT%0002201" Cell="1,3" />
-                          <ParameterRefRef RefId="%AID%_UP-%TT%00021_R-%TT%0002101" Cell="1,4" />
-                        </ParameterBlock>
+                      </when>
+                    </choose>
+                    <ParameterBlock Id="%AID%_PB-nnn" Name="GesamtenergieCyclic" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
+                      <Rows>
+                        <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
+                      </Rows>
+                      <Columns>
+                        <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
+                        <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
+                        <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
+                        <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
+                      </Columns>
+                      <ParameterSeparator Id="%AID%_PS-nnn" Text="   Gesamtenergie zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
+                      <ParameterRefRef RefId="%AID%_UP-%TT%00022_R-%TT%0002201" Cell="1,3" />
+                      <ParameterRefRef RefId="%AID%_UP-%TT%00021_R-%TT%0002101" Cell="1,4" />
+                    </ParameterBlock>
+                    <choose ParamRefId="%AID%_UP-%TT%00019_R-%TT%0001901">
+                      <when test="1">
                         <ComObjectRefRef RefId="%AID%_O-%TT%00004_R-%TT%0000401" />
+                      </when>
+                      <when test="0">
+                        <choose ParamRefId="%AID%_UP-%TT%00022_R-%TT%0002201">
+                          <when test="!=0">
+                            <ComObjectRefRef RefId="%AID%_O-%TT%00004_R-%TT%0000401" />
+                          </when>
+                        </choose>
                       </when>
                     </choose>
                   </when>

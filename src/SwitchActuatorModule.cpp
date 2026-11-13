@@ -95,8 +95,8 @@ void SwitchActuatorModule::loop()
     }
 
 #ifdef OPENKNX_SWA_BL0942_SPI
-    SwaStatus::sendValue<float>(KoSWA_TotalCurrent, DPT_Value_Electric_Current, ParamSWA_TotalCurrentSend, false, totalCurrent, _statusTotalCurrent, ParamSWA_TotalCurrentSendCyclicTimeMS, ParamSWA_TotalCurrentSendMinChangePercent, ParamSWA_TotalCurrentSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1000.0f);
-    SwaStatus::sendValue<float>(KoSWA_TotalPower, DPT_Value_Power, ParamSWA_TotalPowerSend, false, totalPower, _statusTotalPower, ParamSWA_TotalPowerSendCyclicTimeMS, ParamSWA_TotalPowerSendMinChangePercent, ParamSWA_TotalPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
+    SwaStatus::sendValue<float>(KoSWA_TotalCurrent, DPT_Value_Electric_Current, ParamSWA_TotalCurrentSend, false, totalCurrent, _statusTotalCurrent, ParamSWA_TotalCurrentSendCyclicTimeMS, ParamSWA_TotalCurrentSendMinChangePercent, ParamSWA_TotalCurrentSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1000.0f, ParamSWA_TotalCurrentSendCyclicAverage);
+    SwaStatus::sendValue<float>(KoSWA_TotalPower, DPT_Value_Power, ParamSWA_TotalPowerSend, false, totalPower, _statusTotalPower, ParamSWA_TotalPowerSendCyclicTimeMS, ParamSWA_TotalPowerSendMinChangePercent, ParamSWA_TotalPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1.0f, ParamSWA_TotalPowerSendCyclicAverage);
     SwaStatus::sendValue<int32_t>(KoSWA_TotalEnergy, DPT_ActiveEnergy, ParamSWA_TotalEnergySend, false, (int32_t)totalEnergyWh, _statusTotalEnergy, ParamSWA_TotalEnergySendCyclicTimeMS, 0, ParamSWA_TotalEnergySendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
 #endif
 }

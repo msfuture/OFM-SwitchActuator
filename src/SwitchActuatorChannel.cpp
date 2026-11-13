@@ -52,7 +52,7 @@ void SwitchActuatorChannel::processInputKo(GroupObject &ko)
             break;
 #ifdef OPENKNX_SWA_BL0942_SPI
         case SWA_KoChEnergyReset:
-            if (ParamSWA_ChMeasureActive && ParamSWA_ChEnergySend && (bool)ko.value(DPT_Reset))
+            if (ParamSWA_ChMeasureActive && (bool)ko.value(DPT_Reset))
             {
                 logInfoP("Reset energy counter");
                 resetEnergy();
@@ -487,12 +487,12 @@ void SwitchActuatorChannel::loop()
             bl0942UpdateTimer = delayTimerInit();
         }
 
-        SwaStatus::sendValue<float>(KoSWA_ChPower, DPT_Value_Power, ParamSWA_ChPowerSend, false, lastDataReceived.watt, _statusPower, ParamSWA_ChPowerSendCyclicTimeMS, ParamSWA_ChPowerSendMinChangePercent, ParamSWA_ChPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
-        SwaStatus::sendValue<float>(KoSWA_ChCurrent, DPT_Value_Electric_Current, ParamSWA_ChCurrentSend, false, lastDataReceived.current, _statusCurrent, ParamSWA_ChCurrentSendCyclicTimeMS, ParamSWA_ChCurrentSendMinChangePercent, ParamSWA_ChCurrentSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1000.0f);
-        SwaStatus::sendValue<float>(KoSWA_ChVoltage, DPT_Value_Electric_Potential, ParamSWA_ChVoltageSend, false, lastDataReceived.voltage, _statusVoltage, ParamSWA_ChVoltageSendCyclicTimeMS, ParamSWA_ChVoltageSendMinChangePercent, ParamSWA_ChVoltageSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
+        SwaStatus::sendValue<float>(KoSWA_ChPower, DPT_Value_Power, ParamSWA_ChPowerSend, false, lastDataReceived.watt, _statusPower, ParamSWA_ChPowerSendCyclicTimeMS, ParamSWA_ChPowerSendMinChangePercent, ParamSWA_ChPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1.0f, ParamSWA_ChPowerSendCyclicAverage);
+        SwaStatus::sendValue<float>(KoSWA_ChCurrent, DPT_Value_Electric_Current, ParamSWA_ChCurrentSend, false, lastDataReceived.current, _statusCurrent, ParamSWA_ChCurrentSendCyclicTimeMS, ParamSWA_ChCurrentSendMinChangePercent, ParamSWA_ChCurrentSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1000.0f, ParamSWA_ChCurrentSendCyclicAverage);
+        SwaStatus::sendValue<float>(KoSWA_ChVoltage, DPT_Value_Electric_Potential, ParamSWA_ChVoltageSend, false, lastDataReceived.voltage, _statusVoltage, ParamSWA_ChVoltageSendCyclicTimeMS, ParamSWA_ChVoltageSendMinChangePercent, ParamSWA_ChVoltageSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1.0f, ParamSWA_ChVoltageSendCyclicAverage);
         // DPT 14.080 (apparent power) has the same 4-byte float encoding as 14.056, but the knx stack
         // only converts 14.000-14.079, so we encode with 14.056 (the KO is declared as 14.080 in ETS)
-        SwaStatus::sendValue<float>(KoSWA_ChApparentPower, DPT_Value_Power, ParamSWA_ChApparentPowerSend, false, _apparentPower, _statusApparentPower, ParamSWA_ChApparentPowerSendCyclicTimeMS, ParamSWA_ChApparentPowerSendMinChangePercent, ParamSWA_ChApparentPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
+        SwaStatus::sendValue<float>(KoSWA_ChApparentPower, DPT_Value_Power, ParamSWA_ChApparentPowerSend, false, _apparentPower, _statusApparentPower, ParamSWA_ChApparentPowerSendCyclicTimeMS, ParamSWA_ChApparentPowerSendMinChangePercent, ParamSWA_ChApparentPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1.0f, ParamSWA_ChApparentPowerSendCyclicAverage);
         // thresholds are configured in 1/100, so compare in scaled units (x100)
         SwaStatus::sendValue<float>(KoSWA_ChPowerFactor, DPT_Value_Power_Factor, ParamSWA_ChPowerFactorSend, false, _powerFactor, _statusPowerFactor, ParamSWA_ChPowerFactorSendCyclicTimeMS, 0, ParamSWA_ChPowerFactorSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 100.0f);
         SwaStatus::sendValue<int32_t>(KoSWA_ChEnergy, DPT_ActiveEnergy, ParamSWA_ChEnergySend, false, (int32_t)_energyWh, _statusEnergy, ParamSWA_ChEnergySendCyclicTimeMS, 0, ParamSWA_ChEnergySendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);

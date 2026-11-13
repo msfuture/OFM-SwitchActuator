@@ -73,7 +73,18 @@ Die Summe der Wirkenergie-Zähler aller aktiven Kanäle kann hier gesendet werde
 <!-- DOC -->
 ####### **Messwert zyklisch senden**
 
-Der Messwert kann bei Bedarf auch zyklisch gesendet werden.
+Der Messwert kann bei Bedarf auch zyklisch gesendet werden. Das zyklische Senden ist unabhängig von *Bei Änderung senden*. Bei stark schwankenden Lasten empfiehlt es sich, *Bei Änderung senden* zu deaktivieren und nur zyklisch (ggf. mit Mittelwert) zu senden, um die Buslast gering zu halten.
+
+Das KO wird eingeblendet, sobald der Wert bei Änderung oder zyklisch gesendet wird.
+
+<!-- DOC -->
+####### **Mittelwert über Zyklus senden**
+
+Ist ein zyklisches Senden eingestellt, kann statt des aktuellen Messwerts der zeitlich gewichtete Mittelwert seit dem letzten zyklischen Senden übertragen werden. Kurze Lastspitzen oder schnell wechselnde Lasten führen so zu einem ruhigen, repräsentativen Wert, ohne den Bus zu belasten.
+
+Wird der Wert nur zyklisch als Mittelwert gesendet, liefert eine Leseanfrage den zuletzt gesendeten Mittelwert. Ist zusätzlich *Bei Änderung senden* aktiv, werden Änderungen weiterhin sofort (als Momentanwert) gesendet.
+
+Für Leistungsfaktor und Wirkenergie steht der Mittelwert nicht zur Verfügung.
 
 ##### **Frontbedienung**
 
