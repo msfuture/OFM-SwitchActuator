@@ -44,7 +44,8 @@
                 <Parameter Id="%AID%_UP-%TT%%CC%017" Name="Ch%C%StairLightActive" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Treppenlicht aktivieren" Value="0" Access="None" />
                 <Parameter Id="%AID%_UP-%TT%%CC%018" Name="Ch%C%ScenesActive" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="Szenen aktivieren" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%053" Name="Ch%C%MeasureActive" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="2" Text="Messungen aktivieren" Value="0" />
-                <!-- 4 bits free -->
+                <Parameter Id="%AID%_UP-%TT%%CC%069" Name="Ch%C%MeasureInvert" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="3" Text="Messrichtung umkehren" Value="0" />
+                <!-- 3 bits free -->
                 <Parameter Id="%AID%_UP-%TT%%CC%025" Name="Ch%C%SceneLearn" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="7" Text="Szene lernen" Value="0" Access="None" />
               </Union>
               <Union SizeInBit="40">
@@ -62,7 +63,10 @@
                 <Parameter Id="%AID%_UP-%TT%%CC%054" Name="Ch%C%PowerSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Bei Änderung senden" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%059" Name="Ch%C%CurrentSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="Bei Änderung senden" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%064" Name="Ch%C%VoltageSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="2" Text="Bei Änderung senden" Value="0" />
-                <!-- 5 bits free -->
+                <Parameter Id="%AID%_UP-%TT%%CC%070" Name="Ch%C%ApparentPowerSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="3" Text="Bei Änderung senden" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%075" Name="Ch%C%PowerFactorSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="4" Text="Bei Änderung senden" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%079" Name="Ch%C%EnergySend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="5" Text="Bei Änderung senden" Value="0" />
+                <!-- 2 bits free -->
                 <Parameter Id="%AID%_UP-%TT%%CC%055" Name="Ch%C%PowerSendMinChangePercent" ParameterType="%AID%_PT-ValueDpt5001" Offset="1" BitOffset="0" Text="Mindeständerung relativ" Value="5" SuffixText="%" />
                 <Parameter Id="%AID%_UP-%TT%%CC%056" Name="Ch%C%PowerSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangePower" Offset="2" BitOffset="0" Text="Mindeständerung absolut" Value="1" SuffixText="W" />
                 <Parameter Id="%AID%_UP-%TT%%CC%057" Name="Ch%C%PowerSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="4" BitOffset="0" Text="Zeitbasis" Value="0" />
@@ -75,6 +79,19 @@
                 <Parameter Id="%AID%_UP-%TT%%CC%066" Name="Ch%C%VoltageSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangeVoltage" Offset="12" BitOffset="0" Text="Mindeständerung absolut" Value="1" SuffixText="V" />
                 <Parameter Id="%AID%_UP-%TT%%CC%067" Name="Ch%C%VoltageSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="13" BitOffset="0" Text="Zeitbasis" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%%CC%068" Name="Ch%C%VoltageSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="13" BitOffset="2" Text="Zeit" Value="0" />
+              </Union>
+              <Union SizeInBit="96">
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="30" BitOffset="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%071" Name="Ch%C%ApparentPowerSendMinChangePercent" ParameterType="%AID%_PT-ValueDpt5001" Offset="0" BitOffset="0" Text="Mindeständerung relativ" Value="5" SuffixText="%" />
+                <Parameter Id="%AID%_UP-%TT%%CC%072" Name="Ch%C%ApparentPowerSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangePower" Offset="1" BitOffset="0" Text="Mindeständerung absolut" Value="1" SuffixText="VA" />
+                <Parameter Id="%AID%_UP-%TT%%CC%073" Name="Ch%C%ApparentPowerSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="3" BitOffset="0" Text="Zeitbasis" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%074" Name="Ch%C%ApparentPowerSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="3" BitOffset="2" Text="Zeit" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%076" Name="Ch%C%PowerFactorSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangePowerFactor" Offset="5" BitOffset="0" Text="Mindeständerung absolut" Value="5" SuffixText="× 0,01" />
+                <Parameter Id="%AID%_UP-%TT%%CC%077" Name="Ch%C%PowerFactorSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="6" BitOffset="0" Text="Zeitbasis" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%078" Name="Ch%C%PowerFactorSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="6" BitOffset="2" Text="Zeit" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%080" Name="Ch%C%EnergySendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangeEnergy" Offset="8" BitOffset="0" Text="Mindeständerung absolut" Value="100" SuffixText="Wh" />
+                <Parameter Id="%AID%_UP-%TT%%CC%081" Name="Ch%C%EnergySendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="10" BitOffset="0" Text="Zeitbasis" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%%CC%082" Name="Ch%C%EnergySendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="10" BitOffset="2" Text="Zeit" Value="0" />
               </Union>
               <op:usePart name="SCENE" xpath="//Static/Parameters/*" instanceFrom="1" instanceTo="8" />
             </Parameters>
@@ -128,6 +145,20 @@
               <ParameterRef Id="%AID%_UP-%TT%%CC%066_R-%TT%%CC%06601" RefId="%AID%_UP-%TT%%CC%066" />
               <ParameterRef Id="%AID%_UP-%TT%%CC%067_R-%TT%%CC%06701" RefId="%AID%_UP-%TT%%CC%067" />
               <ParameterRef Id="%AID%_UP-%TT%%CC%068_R-%TT%%CC%06801" RefId="%AID%_UP-%TT%%CC%068" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%069_R-%TT%%CC%06901" RefId="%AID%_UP-%TT%%CC%069" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%070_R-%TT%%CC%07001" RefId="%AID%_UP-%TT%%CC%070" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%071_R-%TT%%CC%07101" RefId="%AID%_UP-%TT%%CC%071" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%072_R-%TT%%CC%07201" RefId="%AID%_UP-%TT%%CC%072" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%073_R-%TT%%CC%07301" RefId="%AID%_UP-%TT%%CC%073" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%074_R-%TT%%CC%07401" RefId="%AID%_UP-%TT%%CC%074" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%075_R-%TT%%CC%07501" RefId="%AID%_UP-%TT%%CC%075" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%076_R-%TT%%CC%07601" RefId="%AID%_UP-%TT%%CC%076" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%077_R-%TT%%CC%07701" RefId="%AID%_UP-%TT%%CC%077" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%078_R-%TT%%CC%07801" RefId="%AID%_UP-%TT%%CC%078" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%079_R-%TT%%CC%07901" RefId="%AID%_UP-%TT%%CC%079" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%080_R-%TT%%CC%08001" RefId="%AID%_UP-%TT%%CC%080" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%081_R-%TT%%CC%08101" RefId="%AID%_UP-%TT%%CC%081" />
+              <ParameterRef Id="%AID%_UP-%TT%%CC%082_R-%TT%%CC%08201" RefId="%AID%_UP-%TT%%CC%082" />
             </ParameterRefs>
             <ComObjectTable>
               <ComObject Id="%AID%_O-%TT%%CC%001" Name="Ch%C%Switch" Number="%K0%" ObjectSize="1 Bit" Text="Schalten" FunctionText="SA %Z%: Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Enabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
@@ -139,6 +170,10 @@
               <ComObject Id="%AID%_O-%TT%%CC%007" Name="Ch%C%Power" Number="%K6%" ObjectSize="4 Bytes" Text="Wirkleistung" FunctionText="SA %Z%: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-56" />
               <ComObject Id="%AID%_O-%TT%%CC%008" Name="Ch%C%Current" Number="%K7%" ObjectSize="4 Bytes" Text="Strom" FunctionText="SA %Z%: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-19" />
               <ComObject Id="%AID%_O-%TT%%CC%009" Name="Ch%C%Voltage" Number="%K8%" ObjectSize="4 Bytes" Text="Spannung" FunctionText="SA %Z%: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-27" />
+              <ComObject Id="%AID%_O-%TT%%CC%010" Name="Ch%C%ApparentPower" Number="%K9%" ObjectSize="4 Bytes" Text="Scheinleistung" FunctionText="SA %Z%: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-80" />
+              <ComObject Id="%AID%_O-%TT%%CC%011" Name="Ch%C%PowerFactor" Number="%K10%" ObjectSize="4 Bytes" Text="Leistungsfaktor" FunctionText="SA %Z%: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-57" />
+              <ComObject Id="%AID%_O-%TT%%CC%012" Name="Ch%C%Energy" Number="%K11%" ObjectSize="4 Bytes" Text="Wirkenergie" FunctionText="SA %Z%: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-13-10" />
+              <ComObject Id="%AID%_O-%TT%%CC%013" Name="Ch%C%EnergyReset" Number="%K12%" ObjectSize="1 Bit" Text="Wirkenergie zurücksetzen" FunctionText="SA %Z%: Zähler" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-15" />
             </ComObjectTable>
             <ComObjectRefs>
               <ComObjectRef Id="%AID%_O-%TT%%CC%001_R-%TT%%CC%00101" RefId="%AID%_O-%TT%%CC%001" Text="{{0:SA %Z%}}: Schalten" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" />
@@ -150,6 +185,10 @@
               <ComObjectRef Id="%AID%_O-%TT%%CC%007_R-%TT%%CC%00701" RefId="%AID%_O-%TT%%CC%007" Text="{{0:SA %Z%}}: Wirkleistung" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" />
               <ComObjectRef Id="%AID%_O-%TT%%CC%008_R-%TT%%CC%00801" RefId="%AID%_O-%TT%%CC%008" Text="{{0:SA %Z%}}: Strom" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" />
               <ComObjectRef Id="%AID%_O-%TT%%CC%009_R-%TT%%CC%00901" RefId="%AID%_O-%TT%%CC%009" Text="{{0:SA %Z%}}: Spannung" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" />
+              <ComObjectRef Id="%AID%_O-%TT%%CC%010_R-%TT%%CC%01001" RefId="%AID%_O-%TT%%CC%010" Text="{{0:SA %Z%}}: Scheinleistung" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" />
+              <ComObjectRef Id="%AID%_O-%TT%%CC%011_R-%TT%%CC%01101" RefId="%AID%_O-%TT%%CC%011" Text="{{0:SA %Z%}}: Leistungsfaktor" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" />
+              <ComObjectRef Id="%AID%_O-%TT%%CC%012_R-%TT%%CC%01201" RefId="%AID%_O-%TT%%CC%012" Text="{{0:SA %Z%}}: Wirkenergie" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" />
+              <ComObjectRef Id="%AID%_O-%TT%%CC%013_R-%TT%%CC%01301" RefId="%AID%_O-%TT%%CC%013" Text="{{0:SA %Z%}}: Wirkenergie zurücksetzen" TextParameterRefId="%AID%_P-%TT%%CC%001_R-%TT%%CC%00101" />
             </ComObjectRefs>
           </Static>
           <Dynamic>
@@ -332,6 +371,9 @@
                             <choose ParamRefId="%AID%_UP-%TT%%CC%053_R-%TT%%CC%05301">
                               <when test="1">
                                 <ParameterBlock Id="%AID%_PB-nnn" Text="Messungen" Icon="meter-electric-outline">
+                                  <ParameterSeparator Id="%AID%_PS-nnn" Text="Allgemein" UIHint="Headline" />
+                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%069_R-%TT%%CC%06901" IndentLevel="1" HelpContext="%DOC%" />
+
                                   <ParameterSeparator Id="%AID%_PS-nnn" Text="Wirkleistung" UIHint="Headline" />
                                   <ParameterRefRef RefId="%AID%_UP-%TT%%CC%054_R-%TT%%CC%05401" IndentLevel="1" HelpContext="%DOC%" />
                                   <choose ParamRefId="%AID%_UP-%TT%%CC%054_R-%TT%%CC%05401">
@@ -402,6 +444,77 @@
                                       </ParameterBlock>
 
                                       <ComObjectRefRef RefId="%AID%_O-%TT%%CC%009_R-%TT%%CC%00901" />
+                                    </when>
+                                  </choose>
+
+                                  <ParameterSeparator Id="%AID%_PS-nnn" Text="Scheinleistung" UIHint="Headline" />
+                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%070_R-%TT%%CC%07001" IndentLevel="1" HelpContext="%DOC%" />
+                                  <choose ParamRefId="%AID%_UP-%TT%%CC%070_R-%TT%%CC%07001">
+                                    <when test="1">
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%071_R-%TT%%CC%07101" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%072_R-%TT%%CC%07201" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterBlock Id="%AID%_PB-nnn" Name="ApparentPowerSend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
+                                        <Rows>
+                                          <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
+                                        </Rows>
+                                        <Columns>
+                                          <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
+                                          <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
+                                          <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
+                                          <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
+                                        </Columns>
+                                        <ParameterSeparator Id="%AID%_PS-nnn" Text="   Scheinleistung zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
+                                        <ParameterRefRef RefId="%AID%_UP-%TT%%CC%074_R-%TT%%CC%07401" Cell="1,3" />
+                                        <ParameterRefRef RefId="%AID%_UP-%TT%%CC%073_R-%TT%%CC%07301" Cell="1,4" />
+                                      </ParameterBlock>
+                                      <ComObjectRefRef RefId="%AID%_O-%TT%%CC%010_R-%TT%%CC%01001" />
+                                    </when>
+                                  </choose>
+
+                                  <ParameterSeparator Id="%AID%_PS-nnn" Text="Leistungsfaktor" UIHint="Headline" />
+                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%075_R-%TT%%CC%07501" IndentLevel="1" HelpContext="%DOC%" />
+                                  <choose ParamRefId="%AID%_UP-%TT%%CC%075_R-%TT%%CC%07501">
+                                    <when test="1">
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%076_R-%TT%%CC%07601" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterBlock Id="%AID%_PB-nnn" Name="PowerFactorSend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
+                                        <Rows>
+                                          <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
+                                        </Rows>
+                                        <Columns>
+                                          <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
+                                          <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
+                                          <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
+                                          <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
+                                        </Columns>
+                                        <ParameterSeparator Id="%AID%_PS-nnn" Text="   Leistungsfaktor zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
+                                        <ParameterRefRef RefId="%AID%_UP-%TT%%CC%078_R-%TT%%CC%07801" Cell="1,3" />
+                                        <ParameterRefRef RefId="%AID%_UP-%TT%%CC%077_R-%TT%%CC%07701" Cell="1,4" />
+                                      </ParameterBlock>
+                                      <ComObjectRefRef RefId="%AID%_O-%TT%%CC%011_R-%TT%%CC%01101" />
+                                    </when>
+                                  </choose>
+
+                                  <ParameterSeparator Id="%AID%_PS-nnn" Text="Wirkenergie" UIHint="Headline" />
+                                  <ParameterRefRef RefId="%AID%_UP-%TT%%CC%079_R-%TT%%CC%07901" IndentLevel="1" HelpContext="%DOC%" />
+                                  <choose ParamRefId="%AID%_UP-%TT%%CC%079_R-%TT%%CC%07901">
+                                    <when test="1">
+                                      <ParameterRefRef RefId="%AID%_UP-%TT%%CC%080_R-%TT%%CC%08001" IndentLevel="2" HelpContext="%DOC%" />
+                                      <ParameterBlock Id="%AID%_PB-nnn" Name="EnergySend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
+                                        <Rows>
+                                          <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
+                                        </Rows>
+                                        <Columns>
+                                          <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
+                                          <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
+                                          <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
+                                          <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
+                                        </Columns>
+                                        <ParameterSeparator Id="%AID%_PS-nnn" Text="   Wirkenergie zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
+                                        <ParameterRefRef RefId="%AID%_UP-%TT%%CC%082_R-%TT%%CC%08201" Cell="1,3" />
+                                        <ParameterRefRef RefId="%AID%_UP-%TT%%CC%081_R-%TT%%CC%08101" Cell="1,4" />
+                                      </ParameterBlock>
+                                      <ComObjectRefRef RefId="%AID%_O-%TT%%CC%012_R-%TT%%CC%01201" />
+                                      <ComObjectRefRef RefId="%AID%_O-%TT%%CC%013_R-%TT%%CC%01301" />
                                     </when>
                                   </choose>
                                 </ParameterBlock>

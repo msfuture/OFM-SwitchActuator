@@ -50,6 +50,15 @@ void SwitchActuatorChannel::processInputKo(GroupObject &ko)
         case SWA_KoChScene:
             processScene((uint8_t)ko.value(Dpt(18, 1, 1)) + 1, ko.value(Dpt(18, 1, 0)));
             break;
+#ifdef OPENKNX_SWA_BL0942_SPI
+        case SWA_KoChEnergyReset:
+            if (ParamSWA_ChMeasureActive && ParamSWA_ChEnergySend && (bool)ko.value(DPT_Reset))
+            {
+                logInfoP("Reset energy counter");
+                resetEnergy();
+            }
+            break;
+#endif
     }
 
     logIndentDown();
@@ -481,6 +490,12 @@ void SwitchActuatorChannel::loop()
         SwaStatus::sendValue<float>(KoSWA_ChPower, DPT_Value_Power, ParamSWA_ChPowerSend, false, lastDataReceived.watt, _statusPower, ParamSWA_ChPowerSendCyclicTimeMS, ParamSWA_ChPowerSendMinChangePercent, ParamSWA_ChPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
         SwaStatus::sendValue<float>(KoSWA_ChCurrent, DPT_Value_Electric_Current, ParamSWA_ChCurrentSend, false, lastDataReceived.current, _statusCurrent, ParamSWA_ChCurrentSendCyclicTimeMS, ParamSWA_ChCurrentSendMinChangePercent, ParamSWA_ChCurrentSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1000.0f);
         SwaStatus::sendValue<float>(KoSWA_ChVoltage, DPT_Value_Electric_Potential, ParamSWA_ChVoltageSend, false, lastDataReceived.voltage, _statusVoltage, ParamSWA_ChVoltageSendCyclicTimeMS, ParamSWA_ChVoltageSendMinChangePercent, ParamSWA_ChVoltageSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
+        // DPT 14.080 (apparent power) has the same 4-byte float encoding as 14.056, but the knx stack
+        // only converts 14.000-14.079, so we encode with 14.056 (the KO is declared as 14.080 in ETS)
+        SwaStatus::sendValue<float>(KoSWA_ChApparentPower, DPT_Value_Power, ParamSWA_ChApparentPowerSend, false, _apparentPower, _statusApparentPower, ParamSWA_ChApparentPowerSendCyclicTimeMS, ParamSWA_ChApparentPowerSendMinChangePercent, ParamSWA_ChApparentPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
+        // thresholds are configured in 1/100, so compare in scaled units (x100)
+        SwaStatus::sendValue<float>(KoSWA_ChPowerFactor, DPT_Value_Power_Factor, ParamSWA_ChPowerFactorSend, false, _powerFactor, _statusPowerFactor, ParamSWA_ChPowerFactorSendCyclicTimeMS, 0, ParamSWA_ChPowerFactorSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 100.0f);
+        SwaStatus::sendValue<int32_t>(KoSWA_ChEnergy, DPT_ActiveEnergy, ParamSWA_ChEnergySend, false, (int32_t)_energyWh, _statusEnergy, ParamSWA_ChEnergySendCyclicTimeMS, 0, ParamSWA_ChEnergySendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
     }
 #endif
 #endif
@@ -537,13 +552,64 @@ void SwitchActuatorChannel::dataReceivedBl0942(bl0942::SensorData &data)
         }
     }
 
-    if (OPENKNX_SWA_BL0942_INVERT_DIRECTION)
+    // hardware specific direction (board layout) combined with the per channel ETS setting
+    // "Messrichtung umkehren" (e.g. for a feeding device or a reversed connection)
+    bool invert = OPENKNX_SWA_BL0942_INVERT_DIRECTION;
+    if (ParamSWA_ChMeasureInvert)
+        invert = !invert;
+
+    if (invert)
         data.watt = -data.watt;
 
+    // the BL0942 delivers an unsigned RMS current, its direction follows the active power
     if (data.watt < 0)
         data.current *= -1;
 
+    // apparent power S = U * I and power factor cos phi = P / S (signed like P)
+    _apparentPower = data.voltage * fabsf(data.current);
+    if (_apparentPower >= OPENKNX_SWA_POWER_FACTOR_MIN_VA)
+        _powerFactor = constrain(data.watt / _apparentPower, -1.0f, 1.0f);
+    else
+        _powerFactor = 0.0f;
+
+    // the chip counts in absolute accumulation mode, so energy always increases independent of the direction
+    updateEnergy(data.energy);
+
     lastDataReceived = data;
+}
+
+void SwitchActuatorChannel::updateEnergy(float chipEnergyKWh)
+{
+    // The BL0942 counter starts at 0 whenever the chip is (re-)initialized, so only the increase since
+    // the last reading is added to the persistent counter that is stored in flash.
+    if (_energyChipValid)
+    {
+        const float delta = chipEnergyKWh - _energyChipLastKWh;
+        if (delta > 0.0f && delta <= OPENKNX_SWA_ENERGY_MAX_STEP_KWH)
+            _energyWh += delta * 1000.0;
+        else if (delta != 0.0f)
+            logDebugP("Energy counter jump ignored (%.4f kWh -> %.4f kWh)", _energyChipLastKWh, chipEnergyKWh);
+    }
+
+    _energyChipLastKWh = chipEnergyKWh;
+    _energyChipValid = true;
+}
+
+double SwitchActuatorChannel::getEnergyWh()
+{
+    return _energyWh;
+}
+
+void SwitchActuatorChannel::setEnergyWh(double energyWh)
+{
+    _energyWh = energyWh;
+}
+
+void SwitchActuatorChannel::resetEnergy()
+{
+    _energyWh = 0.0;
+    // force the next status output to transmit the new value regardless of the minimum change
+    _statusEnergy.primed = false;
 }
 
 float SwitchActuatorChannel::getPower()

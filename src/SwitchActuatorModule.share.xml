@@ -80,6 +80,12 @@
               <ParameterType Id="%AID%_PT-MinimumChangeVoltage" Name="MinimumChangeVoltage">
                 <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="255" />
               </ParameterType>
+              <ParameterType Id="%AID%_PT-MinimumChangePowerFactor" Name="MinimumChangePowerFactor">
+                <TypeNumber SizeInBit="8" Type="unsignedInt" minInclusive="0" maxInclusive="100" />
+              </ParameterType>
+              <ParameterType Id="%AID%_PT-MinimumChangeEnergy" Name="MinimumChangeEnergy">
+                <TypeNumber SizeInBit="16" Type="unsignedInt" minInclusive="0" maxInclusive="65535" />
+              </ParameterType>
             </ParameterTypes>
             <Parameters>
               <Parameter Id="%AID%_P-%TT%00002" Name="CheckForOneChannel" ParameterType="%AID%_PT-CheckBox" Text="" Value="1" Access="None" />
@@ -96,7 +102,8 @@
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="2" BitOffset="0" />
                 <Parameter Id="%AID%_UP-%TT%00005" Name="TotalPowerSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="0" Text="Gesamtleistung senden" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%00010" Name="TotalCurrentSend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="1" Text="Gesamtstrom senden" Value="0" />
-                <!-- 6 bits free -->
+                <Parameter Id="%AID%_UP-%TT%00019" Name="TotalEnergySend" ParameterType="%AID%_PT-OnOffYesNo" Offset="0" BitOffset="2" Text="Gesamtenergie senden" Value="0" />
+                <!-- 5 bits free -->
                 <Parameter Id="%AID%_UP-%TT%00006" Name="TotalPowerSendMinChangePercent" ParameterType="%AID%_PT-ValueDpt5001" Offset="1" BitOffset="0" Text="Mindeständerung relativ" Value="5" SuffixText="%" />
                 <Parameter Id="%AID%_UP-%TT%00007" Name="TotalPowerSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangePower" Offset="2" BitOffset="0" Text="Mindeständerung absolut" Value="1" SuffixText="W" />
                 <Parameter Id="%AID%_UP-%TT%00008" Name="TotalPowerSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="4" BitOffset="0" Text="Zeitbasis" Value="0" />
@@ -105,6 +112,12 @@
                 <Parameter Id="%AID%_UP-%TT%00012" Name="TotalCurrentSendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangeCurrent" Offset="7" BitOffset="0" Text="Mindeständerung absolut" Value="10" SuffixText="mA" />
                 <Parameter Id="%AID%_UP-%TT%00013" Name="TotalCurrentSendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="9" BitOffset="0" Text="Zeitbasis" Value="0" />
                 <Parameter Id="%AID%_UP-%TT%00014" Name="TotalCurrentSendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="9" BitOffset="2" Text="Zeit" Value="0" />
+              </Union>
+              <Union SizeInBit="32">
+                <Memory CodeSegment="%AID%_RS-04-00000" Offset="13" BitOffset="0" />
+                <Parameter Id="%AID%_UP-%TT%00020" Name="TotalEnergySendMinChangeAbsolute" ParameterType="%AID%_PT-MinimumChangeEnergy" Offset="0" BitOffset="0" Text="Mindeständerung absolut" Value="100" SuffixText="Wh" />
+                <Parameter Id="%AID%_UP-%TT%00021" Name="TotalEnergySendCyclicBase" ParameterType="%AID%_PT-DelayBase" Offset="2" BitOffset="0" Text="Zeitbasis" Value="0" />
+                <Parameter Id="%AID%_UP-%TT%00022" Name="TotalEnergySendCyclicTime" ParameterType="%AID%_PT-DelayTime" Offset="2" BitOffset="2" Text="Zeit" Value="0" />
               </Union>
               <Union SizeInBit="16">
                 <Memory CodeSegment="%AID%_RS-04-00000" Offset="17" BitOffset="0" />
@@ -132,16 +145,22 @@
               <ParameterRef Id="%AID%_UP-%TT%00016_R-%TT%0001601" RefId="%AID%_UP-%TT%00016" />
               <ParameterRef Id="%AID%_P-%TT%00017_R-%TT%0001701" RefId="%AID%_P-%TT%00017" />
               <ParameterRef Id="%AID%_P-%TT%00018_R-%TT%0001801" RefId="%AID%_P-%TT%00018" />
+              <ParameterRef Id="%AID%_UP-%TT%00019_R-%TT%0001901" RefId="%AID%_UP-%TT%00019" />
+              <ParameterRef Id="%AID%_UP-%TT%00020_R-%TT%0002001" RefId="%AID%_UP-%TT%00020" />
+              <ParameterRef Id="%AID%_UP-%TT%00021_R-%TT%0002101" RefId="%AID%_UP-%TT%00021" />
+              <ParameterRef Id="%AID%_UP-%TT%00022_R-%TT%0002201" RefId="%AID%_UP-%TT%00022" />
             </ParameterRefs>
             <ComObjectTable>
               <ComObject Id="%AID%_O-%TT%00001" Name="CentralFunction" Number="0" ObjectSize="1 Bit" Text="Zentralfunktion" FunctionText="SA: Schalten" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-1-1" />
               <ComObject Id="%AID%_O-%TT%00002" Name="TotalPower" Number="1" ObjectSize="4 Bytes" Text="Gesamtleistung" FunctionText="SA: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-56" />
               <ComObject Id="%AID%_O-%TT%00003" Name="TotalCurrent" Number="2" ObjectSize="4 Bytes" Text="Gesamtstrom" FunctionText="SA: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-14-19" />
+              <ComObject Id="%AID%_O-%TT%00004" Name="TotalEnergy" Number="3" ObjectSize="4 Bytes" Text="Gesamtenergie" FunctionText="SA: Status" ReadFlag="Enabled" WriteFlag="Disabled" CommunicationFlag="Enabled" TransmitFlag="Enabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" DatapointType="DPST-13-10" />
             </ComObjectTable>
             <ComObjectRefs>
               <ComObjectRef Id="%AID%_O-%TT%00001_R-%TT%0000101" RefId="%AID%_O-%TT%00001" />
               <ComObjectRef Id="%AID%_O-%TT%00002_R-%TT%0000201" RefId="%AID%_O-%TT%00002" />
               <ComObjectRef Id="%AID%_O-%TT%00003_R-%TT%0000301" RefId="%AID%_O-%TT%00003" />
+              <ComObjectRef Id="%AID%_O-%TT%00004_R-%TT%0000401" RefId="%AID%_O-%TT%00004" />
             </ComObjectRefs>
             <Script>
               <op:include href="SwitchActuatorModule.script.js" type="script" />
@@ -238,6 +257,27 @@
                           <ParameterRefRef RefId="%AID%_UP-%TT%00013_R-%TT%0001301" Cell="1,4" />
                         </ParameterBlock>
                         <ComObjectRefRef RefId="%AID%_O-%TT%00003_R-%TT%0000301" />
+                      </when>
+                    </choose>
+                    <ParameterRefRef RefId="%AID%_UP-%TT%00019_R-%TT%0001901" IndentLevel="1" HelpContext="%DOC%" />
+                    <choose ParamRefId="%AID%_UP-%TT%00019_R-%TT%0001901">
+                      <when test="1">
+                        <ParameterRefRef RefId="%AID%_UP-%TT%00020_R-%TT%0002001" IndentLevel="2" HelpContext="%DOC%" />
+                        <ParameterBlock Id="%AID%_PB-nnn" Name="TotalEnergySend" Inline="true" Layout="Grid" HelpContext="SWA-Messwert-zyklisch-senden"> <!-- cyclic pattern -->
+                          <Rows>
+                            <Row Id="%AID%_PB-nnn_R-1" Name="Row1" />
+                          </Rows>
+                          <Columns>
+                            <Column Id="%AID%_PB-nnn_C-1" Name="Col1" Width="1%" />
+                            <Column Id="%AID%_PB-nnn_C-2" Name="Col2" Width="44%" />
+                            <Column Id="%AID%_PB-nnn_C-3" Name="Col3" Width="15%" />
+                            <Column Id="%AID%_PB-nnn_C-4" Name="Col4" Width="20%" />
+                          </Columns>
+                          <ParameterSeparator Id="%AID%_PS-nnn" Text="   Gesamtenergie zyklisch senden&#10;   (0 = nicht senden)" Cell="1,2" />
+                          <ParameterRefRef RefId="%AID%_UP-%TT%00022_R-%TT%0002201" Cell="1,3" />
+                          <ParameterRefRef RefId="%AID%_UP-%TT%00021_R-%TT%0002101" Cell="1,4" />
+                        </ParameterBlock>
+                        <ComObjectRefRef RefId="%AID%_O-%TT%00004_R-%TT%0000401" />
                       </when>
                     </choose>
                   </when>

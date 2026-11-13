@@ -69,7 +69,7 @@ namespace SwaStatus
         else if (gateSend && changed && (rateLimitMS == 0 || delayCheckMillis(state.rateTimer, rateLimitMS)))
         {
             const bool changedEnough = !state.primed ||
-                                       ((minChangePercent <= 0.0f || diff >= state.lastSent * minChangePercent / 100.0f) &&
+                                       ((minChangePercent <= 0.0f || diff >= fabsf(state.lastSent) * minChangePercent / 100.0f) &&
                                         diff >= minChangeAbsolute);
             if (changedEnough)
             {

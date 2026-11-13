@@ -80,6 +80,7 @@ void SwitchActuatorModule::loop()
 #ifdef OPENKNX_SWA_BL0942_SPI
     float totalCurrent = 0.0f;
     float totalPower = 0.0f;
+    double totalEnergyWh = 0.0;
 #endif
 
     for (uint8_t i = 0; i < MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT); i++)
@@ -89,12 +90,14 @@ void SwitchActuatorModule::loop()
 #ifdef OPENKNX_SWA_BL0942_SPI
         totalCurrent += abs(channel[i]->getCurrent());
         totalPower += abs(channel[i]->getPower());
+        totalEnergyWh += channel[i]->getEnergyWh();
 #endif
     }
 
 #ifdef OPENKNX_SWA_BL0942_SPI
     SwaStatus::sendValue<float>(KoSWA_TotalCurrent, DPT_Value_Electric_Current, ParamSWA_TotalCurrentSend, false, totalCurrent, _statusTotalCurrent, ParamSWA_TotalCurrentSendCyclicTimeMS, ParamSWA_TotalCurrentSendMinChangePercent, ParamSWA_TotalCurrentSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS, true, 1000.0f);
     SwaStatus::sendValue<float>(KoSWA_TotalPower, DPT_Value_Power, ParamSWA_TotalPowerSend, false, totalPower, _statusTotalPower, ParamSWA_TotalPowerSendCyclicTimeMS, ParamSWA_TotalPowerSendMinChangePercent, ParamSWA_TotalPowerSendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
+    SwaStatus::sendValue<int32_t>(KoSWA_TotalEnergy, DPT_ActiveEnergy, ParamSWA_TotalEnergySend, false, (int32_t)totalEnergyWh, _statusTotalEnergy, ParamSWA_TotalEnergySendCyclicTimeMS, 0, ParamSWA_TotalEnergySendMinChangeAbsolute, SwaStatus::SEND_RATE_MS);
 #endif
 }
 
@@ -120,9 +123,10 @@ void SwitchActuatorModule::readFlash(const uint8_t *data, const uint16_t size)
     logIndentUp();
 
     uint8_t version = openknx.flash.readByte();
-    if (version != OPENKNX_SWA_FLASH_VERSION)
+    if (version > OPENKNX_SWA_FLASH_VERSION)
     {
         logDebugP("Invalid flash version %u", version);
+        logIndentDown();
         return;
     }
 
@@ -130,21 +134,51 @@ void SwitchActuatorModule::readFlash(const uint8_t *data, const uint16_t size)
     if (magicWord != OPENKNX_SWA_FLASH_MAGIC_WORD)
     {
         logDebugP("Flash content invalid");
+        logIndentDown();
         return;
     }
 
     uint8_t relayChannelsStored = openknx.flash.readByte();
+    const uint8_t relayBytesStored = (relayChannelsStored + 7) / 8;
 
+    // always read all stored bytes, so that the data following the relay states stays aligned
     uint8_t byteValue = 0;
-    for (uint8_t i = 0; i < MIN(relayChannelsStored, MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT)); i++)
+    for (uint8_t i = 0; i < relayBytesStored * 8; i++)
     {
         uint8_t bitIndex = i % 8;
         if (bitIndex == 0)
             byteValue = openknx.flash.readByte();
 
-        channel[i]->doSwitch(bitRead(byteValue, bitIndex), false);
+        if (i < MIN(relayChannelsStored, MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT)))
+            channel[i]->doSwitch(bitRead(byteValue, bitIndex), false);
     }
-    
+
+#ifdef OPENKNX_SWA_BL0942_SPI
+    // energy section: 1 byte channel count + 8 byte (uint64, mWh) per channel
+    const uint16_t relaySectionSize = 6 + relayBytesStored;
+    if (version >= 1 && size > relaySectionSize)
+    {
+        const uint8_t energyChannelsStored = openknx.flash.readByte();
+        if (size >= relaySectionSize + 1 + energyChannelsStored * 8)
+        {
+            for (uint8_t i = 0; i < energyChannelsStored; i++)
+            {
+                const uint64_t high = openknx.flash.readInt();
+                const uint64_t low = openknx.flash.readInt();
+                const uint64_t energyMilliWh = (high << 32) | low;
+
+                if (i < OPENKNX_SWA_CHANNEL_COUNT)
+                {
+                    channel[i]->setEnergyWh(energyMilliWh / 1000.0);
+                    logDebugP("Channel %u: restored energy %.3f kWh", i, energyMilliWh / 1000000.0);
+                }
+            }
+        }
+        else
+            logDebugP("Energy data incomplete, ignored");
+    }
+#endif
+
     logIndentDown();
 }
 
@@ -171,12 +205,29 @@ void SwitchActuatorModule::writeFlash()
     }
     openknx.flash.writeByte(byteValue);
 
+#ifdef OPENKNX_SWA_BL0942_SPI
+    // energy counters of all hardware channels (independent of visible channels, so that a
+    // temporarily hidden channel does not lose its counter)
+    openknx.flash.writeByte(OPENKNX_SWA_CHANNEL_COUNT);
+    for (uint8_t i = 0; i < OPENKNX_SWA_CHANNEL_COUNT; i++)
+    {
+        const double energyWh = channel[i]->getEnergyWh();
+        const uint64_t energyMilliWh = energyWh > 0.0 ? (uint64_t)(energyWh * 1000.0) : 0;
+        openknx.flash.writeInt((uint32_t)(energyMilliWh >> 32));
+        openknx.flash.writeInt((uint32_t)(energyMilliWh & 0xFFFFFFFF));
+    }
+#endif
+
     logDebugP("Relays state written to flash");
 }
 
 uint16_t SwitchActuatorModule::flashSize()
 {
-    return 6 + ceil(MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT) / 8.0);
+    uint16_t size = 6 + ceil(MIN(ParamSWA_VisibleChannels, OPENKNX_SWA_CHANNEL_COUNT) / 8.0);
+#ifdef OPENKNX_SWA_BL0942_SPI
+    size += 1 + OPENKNX_SWA_CHANNEL_COUNT * 8;
+#endif
+    return size;
 }
 
 void SwitchActuatorModule::savePower()

@@ -56,6 +56,11 @@ Die absolute Gesamtleistung über alle aktiven Kanäle kann hier gesendet werden
 Die absolute Gesamtstrom über alle aktiven Kanäle kann hier gesendet werden.
 
 <!-- DOC -->
+###### **Gesamtenergie senden**
+
+Die Summe der Wirkenergie-Zähler aller aktiven Kanäle kann hier gesendet werden (DPT 13.010, Wh). Wird der Zähler eines Kanals zurückgesetzt, verringert sich die Gesamtenergie entsprechend.
+
+<!-- DOC -->
 ####### **Mindeständerung relativ**
 
 Änderungen werden gesendet, wenn sowohl die relative wie auch absolute Mindeständerung erfüllt ist.
@@ -202,12 +207,36 @@ Festlegung, ob Szenenfunktionen genutzt werden sollen.
 
 ### **Messungen**
 
-Einstellungen zu Leistungs-, Strom- und Spannungsmessungen.
+Einstellungen zu Leistungs-, Strom-, Spannungs- und Energiemessungen.
+
+Folgende Messwerte stehen pro Kanal zur Verfügung:
+
+| Messwert        | DPT    | Einheit | Beschreibung |
+|-----------------|--------|---------|--------------|
+| Wirkleistung    | 14.056 | W       | Vorzeichenbehaftet, Vorzeichen entspricht der Energierichtung |
+| Strom           | 14.019 | A       | Effektivwert, Vorzeichen folgt der Wirkleistung |
+| Spannung        | 14.027 | V       | Effektivwert |
+| Scheinleistung  | 14.080 | VA      | Berechnet aus Spannung × Strom |
+| Leistungsfaktor | 14.057 | -       | cos φ = Wirkleistung / Scheinleistung (-1 … 1), unter 1 VA wird 0 gesendet |
+| Wirkenergie     | 13.010 | Wh      | Zählerstand, wird im Flash gespeichert |
+
+<!-- DOC -->
+#### **Messrichtung umkehren**
+
+Kehrt das Vorzeichen von Wirkleistung, Strom und Leistungsfaktor dieses Kanals um. Das ist z. B. sinnvoll, wenn an dem Kanal ein einspeisendes Gerät (z. B. Balkonkraftwerk) angeschlossen ist oder Ein- und Ausgang vertauscht verdrahtet sind und die Werte deshalb mit dem falschen Vorzeichen geliefert werden.
+
+Der Wirkenergie-Zähler zählt immer den Betrag und ist von dieser Einstellung nicht betroffen.
 
 <!-- DOC -->
 #### **Bei Änderung senden**
 
 Hier wird festgelegt, ob der Messwert bei Änderung gesendet werden soll.
+
+#### **Wirkenergie**
+
+Der Wirkenergie-Zähler summiert die über den Kanal übertragene Energie (unabhängig von der Richtung) und wird im Flash gespeichert, so dass er Neustarts und Busspannungsausfälle übersteht. Gespeichert wird bei Busspannungsverlust sowie über die Einstellungen zum (periodischen) Speichern unter *Allgemein*. Es wird empfohlen, dort ein periodisches Speichern zu aktivieren, damit bei einem unerwarteten Neustart möglichst wenig Energie verloren geht.
+
+Über das KO *Wirkenergie zurücksetzen* (DPT 1.015) kann der Zähler mit einer 1 auf 0 zurückgesetzt werden.
 
 ### **Szene**
 

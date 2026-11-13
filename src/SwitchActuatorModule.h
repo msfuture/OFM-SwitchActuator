@@ -4,7 +4,9 @@
 #include "hardware.h"
 #include "knxprod.h"
 
-#define OPENKNX_SWA_FLASH_VERSION 0
+// version 0: relay states
+// version 1: relay states + energy counters (only on hardware with BL0942)
+#define OPENKNX_SWA_FLASH_VERSION 1
 #define OPENKNX_SWA_FLASH_MAGIC_WORD 3441922009
 
 #ifdef OPENKNX_SWA_SET_PINS
@@ -61,6 +63,7 @@ class SwitchActuatorModule : public OpenKNX::Module
 #ifdef OPENKNX_SWA_BL0942_SPI
     SwaStatus::ValueState _statusTotalCurrent;
     SwaStatus::ValueState _statusTotalPower;
+    SwaStatus::ValueState _statusTotalEnergy;
 #endif
 };
 

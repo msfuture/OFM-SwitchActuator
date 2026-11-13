@@ -6,6 +6,12 @@
 
   #define OPENKNX_SWA_BL0942_INIT_DELAY 5000 // wait 5s to let capacitors charge first
   #define OPENKNX_SWA_BL0942_LOOP_DELAY 100
+
+  // below this apparent power the power factor is meaningless (no load / noise) and reported as 0
+  #define OPENKNX_SWA_POWER_FACTOR_MIN_VA 1.0f
+  // plausibility limit for the energy increase between two BL0942 readings (in kWh); larger jumps
+  // (e.g. after a chip reset or a corrupt frame) are ignored and the counter baseline is re-taken
+  #define OPENKNX_SWA_ENERGY_MAX_STEP_KWH 0.05f
 #endif
 
 #define SWITCH_DEBOUNCE 250
@@ -37,12 +43,23 @@ class SwitchActuatorChannel : public OpenKNX::Channel
     SwaStatus::ValueState _statusPower;
     SwaStatus::ValueState _statusCurrent;
     SwaStatus::ValueState _statusVoltage;
+    SwaStatus::ValueState _statusApparentPower;
+    SwaStatus::ValueState _statusPowerFactor;
+    SwaStatus::ValueState _statusEnergy;
+
+    float _apparentPower = 0.0f; // VA
+    float _powerFactor = 0.0f;   // -1..1, sign follows active power direction
+
+    double _energyWh = 0.0;          // persistent energy counter (Wh)
+    float _energyChipLastKWh = 0.0f; // last raw BL0942 energy reading (kWh since chip start)
+    bool _energyChipValid = false;   // _energyChipLastKWh holds a usable baseline
 
     uint32_t _debugTimer = 0;
 
     void dataReceivedBl0942(bl0942::SensorData &data);
     void setChannelSelectorBl0942(bool active);
     void initBl0942();
+    void updateEnergy(float chipEnergyKWh);
 #endif
 
   protected:
@@ -63,5 +80,8 @@ class SwitchActuatorChannel : public OpenKNX::Channel
 #ifdef OPENKNX_SWA_BL0942_SPI
     float getPower();
     float getCurrent();
+    double getEnergyWh();
+    void setEnergyWh(double energyWh);
+    void resetEnergy();
 #endif
 };
